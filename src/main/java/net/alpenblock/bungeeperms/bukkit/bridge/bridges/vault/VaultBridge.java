@@ -36,7 +36,6 @@ public class VaultBridge implements Bridge
     @Override
     public void disable()
     {
-        Bukkit.getPluginManager().registerEvents(this, PluginBungeePermsBukkitBridge.getInstance());
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
         if(plugin!=null)
         {
