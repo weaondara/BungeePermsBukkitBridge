@@ -30,7 +30,6 @@ public class WorldEditBridge implements Bridge
     @Override
     public void disable()
     {
-        Bukkit.getPluginManager().registerEvents(this, PluginBungeePermsBukkitBridge.getInstance());
         Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
         if(plugin!=null)
         {
