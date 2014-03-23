@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 
 /**
@@ -27,9 +28,11 @@ public class VaultBridge implements Bridge
     public void enable()
     {
         Bukkit.getPluginManager().registerEvents(this, PluginBungeePermsBukkitBridge.getInstance());
+        Bukkit.getLogger().info("Looking for Vault (enable)");
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
         if(plugin!=null)
         {
+            Bukkit.getLogger().info("Found Vault! (enable)");
             inject(plugin);
         }
     }
@@ -42,18 +45,20 @@ public class VaultBridge implements Bridge
         {
             uninject(plugin);
         }
-        
+
         PluginEnableEvent.getHandlerList().unregister(this);
         PluginDisableEvent.getHandlerList().unregister(this);
     }
-    
+
     @EventHandler
     public void onPluginEnable(PluginEnableEvent e)
     {
+        Bukkit.getLogger().info("Looking for Vault (onPluginEnable)");
         if(!e.getPlugin().getName().equalsIgnoreCase("vault"))
         {
             return;
         }
+        Bukkit.getLogger().info("Found Vault! (onPluginEnable)");
         inject(e.getPlugin());
     }
     @EventHandler
@@ -65,23 +70,13 @@ public class VaultBridge implements Bridge
         }
         uninject(e.getPlugin());
     }
-    
+
     public void inject(Plugin plugin)
     {
         Bukkit.getLogger().info("["+PluginBungeePermsBukkitBridge.getInstance().getDescription().getName()+"] Injection of BungeepermsBukkit into Vault");
-        try 
+        try
         {
-            Vault v= (Vault) plugin;
-            
-            //inject BungeePerms
-            Method m=v.getClass().getDeclaredMethod("hookPermission", String.class, Class.class, ServicePriority.class, String[].class);
-            m.setAccessible(true);
-            m.invoke(v, "BungeePermsBukkit", Permission_BungeePermsBukkit.class, ServicePriority.Normal, new String[]{"net.alpenblock.bungeeperms.bukkit.BungeePerms"});
-            
-            Field f=v.getClass().getDeclaredField("perms");
-            f.setAccessible(true);
-            f.set(v, Bukkit.getServicesManager().getRegistration(Permission.class).getProvider());
-            
+          Bukkit.getServicesManager().register(Permission.class, new Permission_BungeePermsBukkit(plugin), plugin, ServicePriority.Highest);
         } catch (Exception ex) {ex.printStackTrace();}
     }
     public void uninject(Plugin plugin)

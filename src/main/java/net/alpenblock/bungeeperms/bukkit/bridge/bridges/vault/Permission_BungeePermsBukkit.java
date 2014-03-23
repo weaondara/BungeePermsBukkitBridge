@@ -59,6 +59,11 @@ public class Permission_BungeePermsBukkit extends Permission {
         return false;
     }
 
+  @Override
+  public boolean hasGroupSupport() {
+    return true;
+  }
+
     public class PermissionServerListener implements Listener {
 
         Permission_BungeePermsBukkit permission = null;

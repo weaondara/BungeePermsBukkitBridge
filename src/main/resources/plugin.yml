@@ -3,3 +3,4 @@ main: net.alpenblock.bungeeperms.bukkit.bridge.PluginBungeePermsBukkitBridge
 version: 1.0.0
 authors: [wea_ondara]
 depend: [BungeePermsBukkit]
+softdepend: [Vault]
