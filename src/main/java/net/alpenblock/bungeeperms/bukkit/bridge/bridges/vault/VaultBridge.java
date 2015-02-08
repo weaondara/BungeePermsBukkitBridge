@@ -76,6 +76,8 @@ public class VaultBridge implements Bridge
             //inject BungeePerms
             Method m=v.getClass().getDeclaredMethod("hookPermission", String.class, Class.class, ServicePriority.class, String[].class);
             m.setAccessible(true);
+            // signature from Vault:
+            // private void hookPermission (String name, Class<? extends Permission> hookClass, ServicePriority priority, String...packages)
             m.invoke(v, "BungeePermsBukkit", Permission_BungeePermsBukkit.class, ServicePriority.Normal, new String[]{"net.alpenblock.bungeeperms.bukkit.BungeePerms"});
             
             Field f=v.getClass().getDeclaredField("perms");

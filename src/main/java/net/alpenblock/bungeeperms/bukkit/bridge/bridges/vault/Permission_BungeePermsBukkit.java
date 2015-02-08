@@ -223,4 +223,9 @@ public class Permission_BungeePermsBukkit extends Permission {
     public boolean hasSuperPermsCompat() {
         return true;
     }
+
+	@Override
+	public boolean hasGroupSupport() {
+		return true;
+	}
 }
