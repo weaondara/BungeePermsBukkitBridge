@@ -14,81 +14,89 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class PluginBungeePermsBukkitBridge extends JavaPlugin implements Listener
 {
+
     private static PluginBungeePermsBukkitBridge instance;
-    public static PluginBungeePermsBukkitBridge getInstance() 
+
+    public static PluginBungeePermsBukkitBridge getInstance()
     {
         return instance;
     }
-    
-    private Map<Class<? extends Bridge>,String> brigdesmap;
+
+    private Map<Class<? extends Bridge>, String> brigdesmap;
     private List<Bridge> bridges;
-    
+
     @Override
     public void onLoad()
     {
-        instance=this;
-        
-        brigdesmap=new HashMap<>();
-        bridges=new ArrayList<>();
-        
-        brigdesmap.put(WorldEditBridge.class,"com.sk89q.worldedit.bukkit.WorldEditPlugin");
-        brigdesmap.put(VaultBridge.class,"net.milkbowl.vault.Vault");
-        
-        for(Map.Entry<Class<? extends Bridge>,String> entry:brigdesmap.entrySet())
+        instance = this;
+
+        brigdesmap = new HashMap<>();
+        bridges = new ArrayList<>();
+
+        brigdesmap.put(WorldEditBridge.class, "com.sk89q.worldedit.bukkit.WorldEditPlugin");
+        brigdesmap.put(VaultBridge.class, "net.milkbowl.vault.Vault");
+
+        for (Map.Entry<Class<? extends Bridge>, String> entry : brigdesmap.entrySet())
         {
-            createBridge(entry.getKey(),entry.getValue());
+            createBridge(entry.getKey(), entry.getValue());
         }
     }
+
     @Override
     public void onEnable()
     {
-        for(Bridge b:bridges)
+        for (Bridge b : bridges)
         {
             b.enable();
         }
         Bukkit.getPluginManager().registerEvents(this, this);
     }
+
     @Override
     public void onDisable()
     {
-        PluginEnableEvent.getHandlerList().unregister((Listener)this);
-        for(Bridge b:bridges)
+        PluginEnableEvent.getHandlerList().unregister((Listener) this);
+        for (Bridge b : bridges)
         {
             b.disable();
         }
     }
-    
-    public Bridge createBridge(Class<? extends Bridge> c,String classname)
+
+    public Bridge createBridge(Class<? extends Bridge> c, String classname)
     {
-        try 
+        try
         {
             Class.forName(classname);
-            Bridge b=c.newInstance();
+            Bridge b = c.newInstance();
             bridges.add(b);
             return b;
-        } 
-        catch (Exception ex) {}
+        }
+        catch (Exception ex)
+        {
+        }
         return null;
     }
-    
+
     @EventHandler
     public void onPluginEnable(PluginEnableEvent e)
     {
-        for(Map.Entry<Class<? extends Bridge>, String> entry:brigdesmap.entrySet())
+        for (Map.Entry<Class<? extends Bridge>, String> entry : brigdesmap.entrySet())
         {
             try
             {
                 Class.forName(entry.getValue());
-                for(Bridge b:bridges)
+                for (Bridge b : bridges)
                 {
-                    if(b.getClass().getName().equals(entry.getKey().getName()))
+                    if (b.getClass().getName().equals(entry.getKey().getName()))
                     {
                         throw new Exception();
                     }
                 }
-                createBridge(entry.getKey(),entry.getValue()).enable();
+                createBridge(entry.getKey(), entry.getValue()).enable();
             }
-            catch(Exception ex){}
+            catch (Exception ex)
+            {
+            }
         }
     }
 }

@@ -6,12 +6,10 @@ package net.alpenblock.bungeeperms.bukkit.bridge;
 
 import org.bukkit.event.Listener;
 
-/**
- *
- * @author alex
- */
 public interface Bridge extends Listener
 {
+
     public void enable();
+
     public void disable();
 }

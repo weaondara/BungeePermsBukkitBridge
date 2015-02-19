@@ -4,7 +4,7 @@
 
   <groupId>net.alpenblock.bungeeperms.bukkit.bridge</groupId>
   <artifactId>BungeePermsBukkitBridge</artifactId>
-  <version>1.1</version>
+  <version>2.5</version>
   <packaging>jar</packaging>
 
   <name>BungeePermsBukkitBridge</name>

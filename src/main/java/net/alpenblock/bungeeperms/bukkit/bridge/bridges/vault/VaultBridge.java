@@ -17,74 +17,81 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 
-/**
- *
- * @author alex
- */
 public class VaultBridge implements Bridge
 {
+
     @Override
     public void enable()
     {
         Bukkit.getPluginManager().registerEvents(this, PluginBungeePermsBukkitBridge.getInstance());
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
-        if(plugin!=null)
+        if (plugin != null)
         {
             inject(plugin);
         }
     }
+
     @Override
     public void disable()
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
-        if(plugin!=null)
+        if (plugin != null)
         {
             uninject(plugin);
         }
-        
+
         PluginEnableEvent.getHandlerList().unregister(this);
         PluginDisableEvent.getHandlerList().unregister(this);
     }
-    
+
     @EventHandler
     public void onPluginEnable(PluginEnableEvent e)
     {
-        if(!e.getPlugin().getName().equalsIgnoreCase("vault"))
+        if (!e.getPlugin().getName().equalsIgnoreCase("vault"))
         {
             return;
         }
         inject(e.getPlugin());
     }
+
     @EventHandler
     public void onPluginDisable(PluginDisableEvent e)
     {
-        if(!e.getPlugin().getName().equalsIgnoreCase("vault"))
+        if (!e.getPlugin().getName().equalsIgnoreCase("vault"))
         {
             return;
         }
         uninject(e.getPlugin());
     }
-    
+
     public void inject(Plugin plugin)
     {
-        Bukkit.getLogger().info("["+PluginBungeePermsBukkitBridge.getInstance().getDescription().getName()+"] Injection of BungeepermsBukkit into Vault");
-        try 
+        Bukkit.getLogger().info("[" + PluginBungeePermsBukkitBridge.getInstance().getDescription().getName() + "] Injection of BungeepermsBukkit into Vault");
+        try
         {
-            Vault v= (Vault) plugin;
-            
+            Vault v = (Vault) plugin;
+
             //inject BungeePerms
-            Method m=v.getClass().getDeclaredMethod("hookPermission", String.class, Class.class, ServicePriority.class, String[].class);
+            Method m = v.getClass().getDeclaredMethod("hookPermission", String.class, Class.class, ServicePriority.class, String[].class);
             m.setAccessible(true);
-            m.invoke(v, "BungeePermsBukkit", Permission_BungeePermsBukkit.class, ServicePriority.Normal, new String[]{"net.alpenblock.bungeeperms.bukkit.BungeePerms"});
-            
-            Field f=v.getClass().getDeclaredField("perms");
+            m.invoke(v, "BungeePermsBukkit", Permission_BungeePermsBukkit.class, ServicePriority.Normal, new String[]
+             {
+                 "net.alpenblock.bungeeperms.bukkit.BungeePerms"
+            });
+
+            Field f = v.getClass().getDeclaredField("perms");
             f.setAccessible(true);
             f.set(v, Bukkit.getServicesManager().getRegistration(Permission.class).getProvider());
-            
-        } catch (Exception ex) {ex.printStackTrace();}
+
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
+
     public void uninject(Plugin plugin)
     {
-        Bukkit.getLogger().info("["+PluginBungeePermsBukkitBridge.getInstance().getDescription().getName()+"] Uninjection of BungeepermsBukkit into Vault");
+        Bukkit.getLogger().info("[" + PluginBungeePermsBukkitBridge.getInstance().getDescription().getName() + "] Uninjection of BungeepermsBukkit into Vault");
     }
 }

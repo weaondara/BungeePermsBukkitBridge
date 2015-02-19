@@ -1,5 +1,5 @@
 name: BungeePermsBukkitBridge
 main: net.alpenblock.bungeeperms.bukkit.bridge.PluginBungeePermsBukkitBridge
-version: 1.0.0
+version: 2.5.0
 authors: [wea_ondara]
 depend: [BungeePermsBukkit]

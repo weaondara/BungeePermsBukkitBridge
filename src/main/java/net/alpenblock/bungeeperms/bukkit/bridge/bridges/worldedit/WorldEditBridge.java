@@ -11,82 +11,88 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
-/**
- *
- * @author alex
- */
 public class WorldEditBridge implements Bridge
 {
+
     @Override
     public void enable()
     {
         Bukkit.getPluginManager().registerEvents(this, PluginBungeePermsBukkitBridge.getInstance());
         Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
-        if(plugin!=null)
+        if (plugin != null)
         {
             inject(plugin);
         }
     }
+
     @Override
     public void disable()
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
-        if(plugin!=null)
+        if (plugin != null)
         {
             uninject(plugin);
         }
-        
+
         PluginEnableEvent.getHandlerList().unregister(this);
         PluginDisableEvent.getHandlerList().unregister(this);
     }
-    
+
     @EventHandler
     public void onPluginEnable(PluginEnableEvent e)
     {
-        if(!e.getPlugin().getName().equalsIgnoreCase("worldedit"))
+        if (!e.getPlugin().getName().equalsIgnoreCase("worldedit"))
         {
             return;
         }
         inject(e.getPlugin());
     }
+
     @EventHandler
     public void onPluginDisable(PluginDisableEvent e)
     {
-        if(!e.getPlugin().getName().equalsIgnoreCase("worldedit"))
+        if (!e.getPlugin().getName().equalsIgnoreCase("worldedit"))
         {
             return;
         }
         uninject(e.getPlugin());
     }
-    
+
     public void inject(Plugin plugin)
     {
-        Bukkit.getLogger().info("["+PluginBungeePermsBukkitBridge.getInstance().getDescription().getName()+"] Injection of BungeepermsBukkit into WorldEdit");
-        try 
+        Bukkit.getLogger().info("[" + PluginBungeePermsBukkitBridge.getInstance().getDescription().getName() + "] Injection of BungeepermsBukkit into WorldEdit");
+        try
         {
-            WorldEditPlugin we=(WorldEditPlugin) plugin;
-            
+            WorldEditPlugin we = (WorldEditPlugin) plugin;
+
             //inject BungeePerms
-            Field f=we.getPermissionsResolver().getClass().getDeclaredField("enabledResolvers");
+            Field f = we.getPermissionsResolver().getClass().getDeclaredField("enabledResolvers");
             f.setAccessible(true);
             ((List) f.get(we.getPermissionsResolver())).add(BungeePermsBukkitResolver.class);
-            
+
             we.getPermissionsResolver().findResolver();
-        } catch (Exception ex) {}
+        }
+        catch (Exception ex)
+        {
+        }
     }
+
     public void uninject(Plugin plugin)
     {
-        Bukkit.getLogger().info("["+PluginBungeePermsBukkitBridge.getInstance().getDescription().getName()+"] Uninjection of BungeepermsBukkit into WorldEdit");
-        try 
+        Bukkit.getLogger().info("[" + PluginBungeePermsBukkitBridge.getInstance().getDescription().getName() + "] Uninjection of BungeepermsBukkit into WorldEdit");
+        try
         {
-            WorldEditPlugin we=(WorldEditPlugin) plugin;
-            
+            WorldEditPlugin we = (WorldEditPlugin) plugin;
+
             //inject BungeePerms
-            Field f=we.getPermissionsResolver().getClass().getDeclaredField("enabledResolvers");
+            Field f = we.getPermissionsResolver().getClass().getDeclaredField("enabledResolvers");
             f.setAccessible(true);
-            ((List)f.get(we.getPermissionsResolver())).remove(BungeePermsBukkitResolver.class);
-            
+            ((List) f.get(we.getPermissionsResolver())).remove(BungeePermsBukkitResolver.class);
+
             we.getPermissionsResolver().findResolver();
-        } catch (Exception ex) { }
+        }
+        catch (Exception ex)
+        {
+        }
     }
 }
