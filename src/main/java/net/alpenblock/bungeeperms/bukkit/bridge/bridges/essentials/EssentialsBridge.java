@@ -103,7 +103,6 @@ public class EssentialsBridge implements Bridge
                     Logger.getLogger("Essentials").log(Level.INFO, "Essentials: Using BungeePerms based permissions.");
                     handler = new BungeePermsHandler();
                     f.set(permhandler, handler);
-                    System.out.println(f.get(permhandler));
                 }
             }
         }
