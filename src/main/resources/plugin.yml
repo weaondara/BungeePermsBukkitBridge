@@ -3,3 +3,7 @@ main: net.alpenblock.bungeeperms.bukkit.bridge.PluginBungeePermsBukkitBridge
 version: 2.5.0
 authors: [wea_ondara]
 depend: [BungeePermsBukkit]
+
+commands:
+    'bungeepermsbukkitbridge reload':
+        description: reinjects Bungeeperms into all found/supported plugins

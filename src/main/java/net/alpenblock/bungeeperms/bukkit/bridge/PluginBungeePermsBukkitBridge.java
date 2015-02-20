@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.alpenblock.bungeeperms.bukkit.bridge.bridges.essentials.EssentialsBridge;
 import net.alpenblock.bungeeperms.bukkit.bridge.bridges.vault.VaultBridge;
 import net.alpenblock.bungeeperms.bukkit.bridge.bridges.worldedit.WorldEditBridge;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
@@ -35,6 +40,7 @@ public class PluginBungeePermsBukkitBridge extends JavaPlugin implements Listene
 
         brigdesmap.put(WorldEditBridge.class, "com.sk89q.worldedit.bukkit.WorldEditPlugin");
         brigdesmap.put(VaultBridge.class, "net.milkbowl.vault.Vault");
+        brigdesmap.put(EssentialsBridge.class, "com.earth2me.essentials.Essentials");
 
         for (Map.Entry<Class<? extends Bridge>, String> entry : brigdesmap.entrySet())
         {
@@ -60,6 +66,26 @@ public class PluginBungeePermsBukkitBridge extends JavaPlugin implements Listene
         {
             b.disable();
         }
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    {
+        if(cmd.getName().equalsIgnoreCase("bungeepermsbukkitbridge"))
+        {
+            if(!(sender instanceof ConsoleCommandSender))
+            {
+                sender.sendMessage(ChatColor.DARK_RED + "Only console can do that!");
+                return true;
+            }
+            if(args.length == 1 && args[0].equalsIgnoreCase("reload"))
+            {
+                onDisable();
+                onEnable();
+            }
+            return true;
+        }
+        return false;
     }
 
     public Bridge createBridge(Class<? extends Bridge> c, String classname)
